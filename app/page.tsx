@@ -1,37 +1,43 @@
 import Link from "next/link";
-import { Globe, Compass, Heart, Camera, Map, ArrowRight } from "lucide-react";
+import { Globe, Compass, Heart, Camera, Map, ArrowRight, Sparkles, MapPin, Users } from "lucide-react";
 
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-brand-bg">
       {/* Hero */}
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-brand-ocean via-brand-sky to-brand-sky-light" />
-        <div className="absolute top-[-80px] right-[-80px] w-64 h-64 rounded-full bg-white/5" />
-        <div className="absolute bottom-[-60px] left-[-60px] w-48 h-48 rounded-full bg-white/5" />
+        <div className="absolute inset-0 bg-gradient-to-br from-brand-ocean via-brand-sky-dark to-brand-sky" />
+        <div className="absolute inset-0 opacity-[0.04]" style={{
+          backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`,
+          backgroundSize: '40px 40px',
+        }} />
 
-        <div className="relative max-w-5xl mx-auto px-6 py-24 md:py-36 text-center">
-          <div className="flex items-center justify-center gap-3 mb-6">
-            <Globe size={40} className="text-white/90" strokeWidth={1.5} />
+        {/* Decorative blurs */}
+        <div className="absolute top-20 right-20 w-96 h-96 rounded-full bg-brand-sky-light/20 blur-3xl" />
+        <div className="absolute -bottom-20 -left-20 w-72 h-72 rounded-full bg-brand-orange/10 blur-3xl" />
+
+        <div className="relative max-w-5xl mx-auto px-6 py-28 md:py-40 text-center">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/10 backdrop-blur-sm rounded-full text-sm font-medium text-white/80 mb-8">
+            <Sparkles size={14} />
+            60 curated destinations worldwide
           </div>
-          <h1 className="font-heading text-5xl md:text-7xl font-bold text-white mb-4 tracking-tight">
-            Bucket List Travel
+
+          <h1 className="font-heading text-5xl sm:text-6xl md:text-8xl font-bold text-white mb-6 tracking-tight leading-[0.95]">
+            Your Next Great
+            <br />
+            <span className="text-brand-sky-light">Adventure</span>
           </h1>
-          <p className="font-heading text-xl md:text-2xl italic text-white/80 max-w-xl mx-auto mb-10">
-            Plan unforgettable adventures together. Explore the world, build your bucket list, and preserve every memory.
+
+          <p className="font-heading text-xl md:text-2xl italic text-white/70 max-w-xl mx-auto mb-12 leading-relaxed">
+            Explore the world together. Plan unforgettable trips. Preserve every memory.
           </p>
+
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link
-              href="/auth/signup"
-              className="flex items-center gap-2 px-8 py-3.5 bg-brand-orange hover:bg-brand-orange-dark text-white font-semibold rounded-2xl text-lg transition-all duration-200 shadow-lg shadow-orange-500/25 cursor-pointer"
-            >
+            <Link href="/auth/signup" className="btn-cta">
               Start Your Journey
               <ArrowRight size={20} />
             </Link>
-            <Link
-              href="/explore"
-              className="flex items-center gap-2 px-8 py-3.5 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-2xl text-lg backdrop-blur transition-all duration-200 cursor-pointer"
-            >
+            <Link href="/explore" className="btn-ghost text-lg">
               Explore Destinations
             </Link>
           </div>
@@ -39,47 +45,49 @@ export default function LandingPage() {
       </section>
 
       {/* Features */}
-      <section className="max-w-6xl mx-auto px-6 py-20">
-        <h2 className="font-heading text-3xl md:text-4xl font-bold text-brand-ocean text-center mb-4">
-          Your Complete Travel Companion
-        </h2>
-        <p className="font-heading text-lg italic text-slate-500 text-center mb-14 max-w-lg mx-auto">
-          Built for couples who want to see the world together
-        </p>
+      <section className="max-w-6xl mx-auto px-6 py-24">
+        <div className="text-center mb-16">
+          <h2 className="section-heading mb-3">
+            Your Complete Travel Companion
+          </h2>
+          <p className="section-subheading">
+            Everything you need to dream, plan, and remember
+          </p>
+        </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
           {[
             {
               icon: Compass,
               title: "Discover",
               desc: "Explore curated destinations rated by cost, safety, and long-stay potential. Filter by region or vibe.",
-              color: "bg-sky-100 text-brand-sky",
+              gradient: "from-sky-500 to-blue-600",
             },
             {
               icon: Heart,
               title: "Bucket List",
-              desc: "Save dream destinations, track your status from dreaming to visited, and share your list with your partner.",
-              color: "bg-pink-100 text-pink-500",
+              desc: "Save dream destinations, track your journey from dreaming to visited, and share with your partner.",
+              gradient: "from-pink-500 to-rose-600",
             },
             {
               icon: Map,
               title: "Plan Trips",
               desc: "Build day-by-day itineraries with budgets, bookings, and logistics. Everything in one place.",
-              color: "bg-orange-100 text-orange-500",
+              gradient: "from-orange-500 to-amber-600",
             },
             {
               icon: Camera,
               title: "Memories",
               desc: "Create beautiful travel journals with photos and stories. Relive your favorite moments forever.",
-              color: "bg-violet-100 text-violet-500",
+              gradient: "from-violet-500 to-purple-600",
             },
           ].map((f) => (
             <div
               key={f.title}
-              className="bg-white rounded-2xl p-6 border border-slate-200/60 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+              className="bg-white rounded-3xl p-7 border border-slate-100 shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 cursor-pointer group"
             >
-              <div className={`w-12 h-12 rounded-xl ${f.color} flex items-center justify-center mb-4`}>
-                <f.icon size={22} />
+              <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${f.gradient} flex items-center justify-center mb-5 shadow-soft group-hover:scale-105 transition-transform duration-300`}>
+                <f.icon size={22} className="text-white" strokeWidth={1.8} />
               </div>
               <h3 className="font-heading text-xl font-bold text-brand-ocean mb-2">
                 {f.title}
@@ -90,19 +98,36 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Stats bar */}
+      <section className="border-y border-slate-100">
+        <div className="max-w-5xl mx-auto px-6 py-14 grid grid-cols-3 gap-8 text-center">
+          {[
+            { icon: MapPin, value: "60+", label: "Destinations" },
+            { icon: Globe, value: "12", label: "Regions" },
+            { icon: Users, value: "2", label: "Built for Couples" },
+          ].map((s) => (
+            <div key={s.label}>
+              <s.icon size={24} className="text-brand-sky mx-auto mb-3" strokeWidth={1.5} />
+              <div className="font-heading text-4xl font-bold text-brand-ocean mb-1">{s.value}</div>
+              <div className="text-sm font-medium text-slate-400">{s.label}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* CTA */}
-      <section className="bg-gradient-to-r from-brand-ocean to-brand-sky py-16">
-        <div className="max-w-3xl mx-auto px-6 text-center">
-          <h2 className="font-heading text-3xl font-bold text-white mb-3">
+      <section className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-brand-ocean via-brand-sky-dark to-brand-sky" />
+        <div className="absolute top-10 right-10 w-64 h-64 rounded-full bg-white/5 blur-2xl" />
+
+        <div className="relative max-w-3xl mx-auto px-6 py-20 text-center">
+          <h2 className="font-heading text-3xl md:text-4xl font-bold text-white mb-4">
             Ready to start exploring?
           </h2>
-          <p className="text-white/70 mb-8">
-            Join couples around the world who are turning travel dreams into reality.
+          <p className="text-white/60 mb-10 text-lg">
+            Join couples around the world turning travel dreams into reality.
           </p>
-          <Link
-            href="/auth/signup"
-            className="inline-flex items-center gap-2 px-8 py-3.5 bg-brand-orange hover:bg-brand-orange-dark text-white font-semibold rounded-2xl text-lg transition-all duration-200 cursor-pointer"
-          >
+          <Link href="/auth/signup" className="btn-cta">
             Create Free Account
             <ArrowRight size={20} />
           </Link>
@@ -110,8 +135,8 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="py-8 text-center text-sm text-slate-400">
-        <p>Made with love for adventurous couples everywhere</p>
+      <footer className="py-10 text-center">
+        <p className="text-sm text-slate-400">Made with love for adventurous couples everywhere</p>
       </footer>
     </div>
   );

@@ -14,15 +14,59 @@
   }
 }
 
+@layer components {
+  .glass-card {
+    @apply bg-white/80 backdrop-blur-xl border border-white/60 shadow-card;
+  }
+
+  .glass-card-hover {
+    @apply hover:bg-white hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-300;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 bg-brand-sky hover:bg-brand-sky-dark text-white font-semibold rounded-2xl transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-brand-sky/40 focus:ring-offset-2;
+  }
+
+  .btn-cta {
+    @apply inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-brand-orange hover:bg-brand-orange-dark text-white font-semibold rounded-2xl text-lg transition-all duration-200 shadow-lg shadow-orange-500/20 cursor-pointer focus:outline-none focus:ring-2 focus:ring-brand-orange/40 focus:ring-offset-2;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-2xl backdrop-blur transition-all duration-200 cursor-pointer;
+  }
+
+  .section-heading {
+    @apply font-heading text-3xl md:text-4xl font-bold text-brand-ocean;
+  }
+
+  .section-subheading {
+    @apply font-heading text-lg italic text-slate-500 max-w-lg mx-auto;
+  }
+
+  .page-banner {
+    @apply relative bg-gradient-to-br from-brand-ocean via-brand-sky-dark to-brand-sky py-14 px-6 overflow-hidden;
+  }
+
+  .page-banner::before {
+    content: '';
+    @apply absolute inset-0 opacity-[0.03];
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  .skeleton {
+    @apply bg-gradient-to-r from-slate-200 via-slate-100 to-slate-200 bg-[length:200%_100%] animate-shimmer rounded-lg;
+  }
+}
+
 @layer utilities {
   .scrollbar-thin::-webkit-scrollbar {
     width: 6px;
   }
   .scrollbar-thin::-webkit-scrollbar-track {
-    @apply bg-brand-bg rounded;
+    @apply bg-transparent rounded;
   }
   .scrollbar-thin::-webkit-scrollbar-thumb {
-    @apply bg-brand-sky-light rounded;
+    @apply bg-slate-300 hover:bg-slate-400 rounded-full;
   }
 }
 

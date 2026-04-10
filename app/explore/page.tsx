@@ -7,7 +7,7 @@ import DestinationModal from "@/components/destinations/DestinationModal";
 import FilterBar from "@/components/ui/FilterBar";
 import { createClient } from "@/lib/supabase";
 import type { Destination, Region, Vibe, SortOption } from "@/lib/types";
-import { Heart } from "lucide-react";
+import { Heart, MapPin } from "lucide-react";
 
 export default function ExplorePage() {
   const [destinations, setDestinations] = useState<Destination[]>([]);
@@ -15,6 +15,7 @@ export default function ExplorePage() {
   const [selectedRegion, setSelectedRegion] = useState<Region>("All");
   const [selectedVibe, setSelectedVibe] = useState<Vibe>("All");
   const [sortBy, setSortBy] = useState<SortOption>("name");
+  const [searchQuery, setSearchQuery] = useState("");
   const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
   const [selectedDest, setSelectedDest] = useState<Destination | null>(null);
   const [user, setUser] = useState<any>(null);
@@ -23,13 +24,11 @@ export default function ExplorePage() {
 
   useEffect(() => {
     async function load() {
-      // Check auth
       const {
         data: { user: authUser },
       } = await supabase.auth.getUser();
       setUser(authUser);
 
-      // Fetch destinations
       const { data: dests } = await supabase
         .from("destinations")
         .select("*")
@@ -37,7 +36,6 @@ export default function ExplorePage() {
 
       if (dests) setDestinations(dests);
 
-      // Fetch user's bucket list
       if (authUser) {
         const { data: bl } = await supabase
           .from("bucket_list")
@@ -89,6 +87,15 @@ export default function ExplorePage() {
   let filtered = destinations.filter((d) => {
     if (selectedRegion !== "All" && d.region !== selectedRegion) return false;
     if (selectedVibe !== "All" && !d.vibes.includes(selectedVibe)) return false;
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      return (
+        d.name.toLowerCase().includes(q) ||
+        d.country?.toLowerCase().includes(q) ||
+        d.region.toLowerCase().includes(q) ||
+        d.tagline?.toLowerCase().includes(q)
+      );
+    }
     return true;
   });
 
@@ -108,14 +115,14 @@ export default function ExplorePage() {
     <div className="min-h-screen bg-brand-bg">
       <Header user={user} onSignOut={handleSignOut} />
 
-      {/* Page Header */}
-      <div className="bg-gradient-to-r from-brand-ocean via-brand-sky to-brand-sky-light py-12 px-6">
-        <div className="max-w-7xl mx-auto text-center">
+      {/* Page Banner */}
+      <div className="page-banner">
+        <div className="relative max-w-7xl mx-auto text-center">
           <h1 className="font-heading text-4xl md:text-5xl font-bold text-white mb-2">
             Explore Destinations
           </h1>
-          <p className="font-heading text-lg italic text-white/75">
-            {destinations.length} incredible places waiting to be discovered
+          <p className="font-heading text-lg italic text-white/60">
+            {destinations.length} incredible places across {new Set(destinations.map(d => d.region)).size} regions
           </p>
         </div>
       </div>
@@ -128,32 +135,50 @@ export default function ExplorePage() {
           onRegionChange={setSelectedRegion}
           onVibeChange={setSelectedVibe}
           onSortChange={setSortBy}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
         />
+
+        {/* Results count */}
+        <div className="flex items-center gap-2 mb-6">
+          <MapPin size={14} className="text-slate-400" />
+          <span className="text-sm font-medium text-slate-400">
+            {loading ? "Loading..." : `${filtered.length} destination${filtered.length !== 1 ? "s" : ""}`}
+          </span>
+        </div>
 
         {loading ? (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="bg-white rounded-2xl overflow-hidden animate-pulse">
-                <div className="h-52 bg-slate-200" />
+              <div key={i} className="bg-white rounded-3xl overflow-hidden border border-slate-100">
+                <div className="h-56 skeleton" />
                 <div className="p-5 space-y-3">
-                  <div className="h-4 bg-slate-200 rounded w-3/4" />
-                  <div className="h-3 bg-slate-100 rounded w-1/2" />
-                  <div className="h-3 bg-slate-100 rounded w-full" />
+                  <div className="h-5 skeleton w-3/4" />
+                  <div className="h-3 skeleton w-1/2" />
+                  <div className="h-3 skeleton w-full" />
+                  <div className="h-3 skeleton w-2/3" />
                 </div>
               </div>
             ))}
           </div>
         ) : filtered.length === 0 ? (
-          <div className="text-center py-16">
-            <Heart size={48} className="text-slate-300 mx-auto mb-4" />
-            <p className="font-heading text-xl text-slate-400">
-              No destinations match your filters. Try a different combination!
+          <div className="text-center py-20">
+            <Heart size={48} className="text-slate-200 mx-auto mb-4" />
+            <p className="font-heading text-xl text-slate-400 mb-2">
+              No destinations match your filters
+            </p>
+            <p className="text-sm text-slate-400">
+              Try a different combination or clear your search
             </p>
           </div>
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filtered.map((d, i) => (
-              <div key={d.id} className="animate-slide-up" style={{ animationDelay: `${i * 50}ms` }}>
+              <div
+                key={d.id}
+                className="animate-slide-up opacity-0"
+                style={{ animationDelay: `${Math.min(i * 40, 400)}ms`, animationFillMode: "forwards" }}
+              >
                 <DestinationCard
                   destination={d}
                   isSaved={savedIds.has(d.id)}
@@ -166,7 +191,6 @@ export default function ExplorePage() {
         )}
       </main>
 
-      {/* Modal */}
       {selectedDest && (
         <DestinationModal
           destination={selectedDest}

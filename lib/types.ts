@@ -102,11 +102,11 @@ export interface MemoryPhoto {
 
 // ─── Filter & UI Types ───
 
-export type Region = "All" | "Asia Pacific" | "Thailand" | "Patagonia" | "Africa";
+export type Region = "All" | "Asia Pacific" | "Europe" | "Central & South America" | "Africa" | "Middle East" | "Caribbean" | "North America" | "Pacific" | "Indian Ocean" | "Central Asia" | "Thailand" | "Patagonia";
 export type Vibe = "All" | "Adventure" | "Culture" | "Food" | "Nature" | "Romance";
 export type SortOption = "name" | "cost-low" | "cost-high" | "safety" | "stay";
 export type BucketStatus = "dreaming" | "planning" | "booked" | "visited";
 
-export const REGIONS: Region[] = ["All", "Asia Pacific", "Thailand", "Patagonia", "Africa"];
+export const REGIONS: Region[] = ["All", "Europe", "Asia Pacific", "Central & South America", "Africa", "Middle East", "Caribbean", "North America", "Pacific", "Indian Ocean", "Central Asia", "Thailand", "Patagonia"];
 export const VIBES: Vibe[] = ["All", "Adventure", "Culture", "Food", "Nature", "Romance"];
 export const MOODS = ["magical", "adventurous", "romantic", "peaceful", "joyful", "awestruck"] as const;

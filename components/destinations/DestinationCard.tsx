@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
 import { Heart, DollarSign, Shield, Home } from "lucide-react";
 import type { Destination } from "@/lib/types";
@@ -21,39 +20,26 @@ export default function DestinationCard({
   onToggleSave,
   onClick,
 }: Props) {
-  const [hovered, setHovered] = useState(false);
-
   return (
     <article
       onClick={() => onClick(d)}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      className={`
-        bg-white rounded-2xl overflow-hidden cursor-pointer
-        border transition-all duration-300
-        ${hovered
-          ? "border-brand-sky-light shadow-[0_20px_40px_rgba(14,165,233,0.12)] -translate-y-1"
-          : "border-slate-200 shadow-sm"
-        }
-      `}
+      className="group bg-white rounded-3xl overflow-hidden cursor-pointer border border-slate-100 shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300"
     >
       {/* Image */}
-      <div className="relative h-52 overflow-hidden">
+      <div className="relative h-56 overflow-hidden">
         {d.image_url && (
           <Image
             src={d.image_url}
             alt={d.name}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            className={`object-cover transition-transform duration-500 ${
-              hovered ? "scale-105" : "scale-100"
-            }`}
+            className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
           />
         )}
-        <div className="absolute bottom-0 inset-x-0 h-20 bg-gradient-to-t from-black/50 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
 
         {/* Region badge */}
-        <span className="absolute top-3 left-3 px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full text-xs font-semibold text-brand-ocean">
+        <span className="absolute top-3.5 left-3.5 px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full text-[11px] font-bold text-brand-ocean uppercase tracking-wider">
           {d.region}
         </span>
 
@@ -63,45 +49,53 @@ export default function DestinationCard({
             e.stopPropagation();
             onToggleSave(d.id);
           }}
-          className="absolute top-3 right-3 w-9 h-9 flex items-center justify-center bg-white/90 backdrop-blur-sm rounded-full hover:scale-110 transition-transform duration-200 cursor-pointer"
+          className={`
+            absolute top-3.5 right-3.5 w-9 h-9 flex items-center justify-center rounded-full transition-all duration-200 cursor-pointer
+            ${isSaved
+              ? "bg-pink-500 shadow-lg shadow-pink-500/30"
+              : "bg-white/90 backdrop-blur-sm hover:bg-white hover:scale-110"
+            }
+          `}
           aria-label={isSaved ? "Remove from bucket list" : "Add to bucket list"}
         >
           <Heart
-            size={17}
-            fill={isSaved ? "#EC4899" : "none"}
-            className={isSaved ? "text-pink-500" : "text-slate-400"}
+            size={16}
+            fill={isSaved ? "white" : "none"}
+            className={isSaved ? "text-white" : "text-slate-500"}
+            strokeWidth={2}
           />
         </button>
 
         {/* Name overlay */}
-        <h3 className="absolute bottom-3 left-4 font-heading text-2xl font-bold text-white drop-shadow-md">
-          {d.name}
-        </h3>
+        <div className="absolute bottom-0 left-0 right-0 p-5">
+          <h3 className="font-heading text-2xl font-bold text-white leading-tight drop-shadow-md">
+            {d.name}
+          </h3>
+          <p className="font-heading text-sm italic text-white/80 mt-0.5 line-clamp-1">
+            {d.tagline}
+          </p>
+        </div>
       </div>
 
       {/* Body */}
       <div className="p-5">
-        <p className="font-heading text-base italic text-brand-sky mb-3 leading-snug">
-          {d.tagline}
-        </p>
-
         {/* Ratings */}
-        <div className="flex flex-col gap-2 mb-3.5">
+        <div className="flex flex-col gap-2.5 mb-4">
           <div className="flex items-center justify-between">
-            <span className="flex items-center gap-1.5 text-xs font-medium text-slate-500">
-              <DollarSign size={13} className="text-orange-500" /> Cost
+            <span className="flex items-center gap-1.5 text-xs font-medium text-slate-400">
+              <DollarSign size={12} /> Cost
             </span>
             <CostLabel level={d.cost_level} />
           </div>
           <div className="flex items-center justify-between">
-            <span className="flex items-center gap-1.5 text-xs font-medium text-slate-500">
-              <Shield size={13} className="text-brand-sky" /> Safety
+            <span className="flex items-center gap-1.5 text-xs font-medium text-slate-400">
+              <Shield size={12} /> Safety
             </span>
             <RatingDots value={d.safety_rating} color="sky" />
           </div>
           <div className="flex items-center justify-between">
-            <span className="flex items-center gap-1.5 text-xs font-medium text-slate-500">
-              <Home size={13} className="text-emerald-500" /> Stay Potential
+            <span className="flex items-center gap-1.5 text-xs font-medium text-slate-400">
+              <Home size={12} /> Stay Potential
             </span>
             <RatingDots value={d.return_potential} color="emerald" />
           </div>

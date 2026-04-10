@@ -3,17 +3,16 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Header from "@/components/layout/Header";
-import DestinationCard from "@/components/destinations/DestinationCard";
 import DestinationModal from "@/components/destinations/DestinationModal";
 import { createClient } from "@/lib/supabase";
 import type { Destination, BucketListItem, Trip, Memory } from "@/lib/types";
-import { Heart, Map, Camera, Compass, ArrowRight, Sparkles } from "lucide-react";
+import { Heart, Map, Camera, Compass, ArrowRight, Sparkles, Plane, Globe } from "lucide-react";
 
-const statusLabels: Record<string, { label: string; color: string }> = {
-  dreaming: { label: "Dreaming", color: "bg-violet-100 text-violet-700" },
-  planning: { label: "Planning", color: "bg-blue-100 text-blue-700" },
-  booked: { label: "Booked!", color: "bg-emerald-100 text-emerald-700" },
-  visited: { label: "Visited", color: "bg-amber-100 text-amber-700" },
+const statusLabels: Record<string, { label: string; color: string; bg: string }> = {
+  dreaming: { label: "Dreaming", color: "text-violet-700", bg: "bg-violet-50 border-violet-100" },
+  planning: { label: "Planning", color: "text-blue-700", bg: "bg-blue-50 border-blue-100" },
+  booked: { label: "Booked!", color: "text-emerald-700", bg: "bg-emerald-50 border-emerald-100" },
+  visited: { label: "Visited", color: "text-amber-700", bg: "bg-amber-50 border-amber-100" },
 };
 
 export default function DashboardPage() {
@@ -40,7 +39,6 @@ export default function DashboardPage() {
       }
       setUser(authUser);
 
-      // Load profile
       const { data: prof } = await supabase
         .from("profiles")
         .select("*")
@@ -48,7 +46,6 @@ export default function DashboardPage() {
         .single();
       setProfile(prof);
 
-      // Load bucket list with destinations
       const { data: bl } = await supabase
         .from("bucket_list")
         .select("*, destination:destinations(*)")
@@ -64,7 +61,6 @@ export default function DashboardPage() {
         setDestinations(destMap);
       }
 
-      // Load trips
       const { data: tr } = await supabase
         .from("trips")
         .select("*")
@@ -73,7 +69,6 @@ export default function DashboardPage() {
         .limit(5);
       if (tr) setTrips(tr);
 
-      // Load memories
       const { data: mem } = await supabase
         .from("memories")
         .select("*")
@@ -121,8 +116,25 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-brand-bg flex items-center justify-center">
-        <div className="animate-pulse text-brand-sky font-heading text-2xl">Loading your adventures...</div>
+      <div className="min-h-screen bg-brand-bg">
+        <Header user={null} />
+        <div className="page-banner">
+          <div className="relative max-w-7xl mx-auto">
+            <div className="h-8 skeleton w-64 mb-2 !bg-white/10" />
+            <div className="h-5 skeleton w-48 !bg-white/10" />
+          </div>
+        </div>
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="bg-white rounded-3xl p-6 border border-slate-100">
+                <div className="h-10 w-10 skeleton rounded-xl mb-3" />
+                <div className="h-7 skeleton w-12 mb-2" />
+                <div className="h-3 skeleton w-20" />
+              </div>
+            ))}
+          </div>
+        </main>
       </div>
     );
   }
@@ -135,13 +147,17 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-brand-bg">
       <Header user={user ? { email: user.email, full_name: profile?.full_name } : null} onSignOut={handleSignOut} />
 
-      {/* Welcome */}
-      <div className="bg-gradient-to-r from-brand-ocean via-brand-sky to-brand-sky-light py-10 px-6">
-        <div className="max-w-7xl mx-auto">
+      {/* Welcome Banner */}
+      <div className="page-banner">
+        <div className="relative max-w-7xl mx-auto">
+          <div className="flex items-center gap-3 mb-1">
+            <Plane size={20} className="text-white/50" />
+            <span className="text-sm font-medium text-white/50 uppercase tracking-widest">Dashboard</span>
+          </div>
           <h1 className="font-heading text-3xl md:text-4xl font-bold text-white mb-1">
             Welcome back{profile?.full_name ? `, ${profile.full_name.split(" ")[0]}` : ""}
           </h1>
-          <p className="font-heading text-lg italic text-white/75">
+          <p className="font-heading text-lg italic text-white/50">
             Your next adventure is waiting
           </p>
         </div>
@@ -151,17 +167,17 @@ export default function DashboardPage() {
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
           {[
-            { label: "Dreaming Of", value: dreamingCount, icon: Sparkles, color: "text-violet-500 bg-violet-50" },
-            { label: "Planning", value: planningCount, icon: Map, color: "text-blue-500 bg-blue-50" },
-            { label: "Visited", value: visitedCount, icon: Heart, color: "text-pink-500 bg-pink-50" },
-            { label: "Memories", value: memories.length, icon: Camera, color: "text-amber-500 bg-amber-50" },
+            { label: "Dreaming Of", value: dreamingCount, icon: Sparkles, gradient: "from-violet-500 to-purple-600" },
+            { label: "Planning", value: planningCount, icon: Map, gradient: "from-blue-500 to-sky-600" },
+            { label: "Visited", value: visitedCount, icon: Globe, gradient: "from-pink-500 to-rose-600" },
+            { label: "Memories", value: memories.length, icon: Camera, gradient: "from-amber-500 to-orange-600" },
           ].map((s) => (
-            <div key={s.label} className="bg-white rounded-2xl p-5 border border-slate-200/60">
-              <div className={`w-10 h-10 rounded-xl ${s.color} flex items-center justify-center mb-3`}>
-                <s.icon size={20} />
+            <div key={s.label} className="bg-white rounded-3xl p-6 border border-slate-100 shadow-card hover:shadow-card-hover transition-shadow duration-300">
+              <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${s.gradient} flex items-center justify-center mb-4 shadow-soft`}>
+                <s.icon size={18} className="text-white" strokeWidth={1.8} />
               </div>
-              <div className="text-2xl font-bold text-brand-ocean">{s.value}</div>
-              <div className="text-xs font-medium text-slate-400 uppercase tracking-wider">{s.label}</div>
+              <div className="font-heading text-3xl font-bold text-brand-ocean">{s.value}</div>
+              <div className="text-xs font-semibold text-slate-400 uppercase tracking-widest mt-0.5">{s.label}</div>
             </div>
           ))}
         </div>
@@ -169,35 +185,37 @@ export default function DashboardPage() {
         {/* Bucket List */}
         <div className="mb-10">
           <div className="flex items-center justify-between mb-5">
-            <h2 className="font-heading text-2xl font-bold text-brand-ocean">
+            <h2 className="section-heading text-2xl">
               Your Bucket List
             </h2>
             <Link
               href="/explore"
               className="flex items-center gap-1.5 text-sm font-semibold text-brand-sky hover:text-brand-sky-dark transition-colors duration-200 cursor-pointer"
             >
-              <Compass size={15} />
-              Add more
+              <Compass size={15} strokeWidth={1.8} />
+              Explore more
               <ArrowRight size={14} />
             </Link>
           </div>
 
           {bucketList.length === 0 ? (
-            <div className="bg-white rounded-2xl p-10 text-center border border-slate-200/60">
-              <Heart size={40} className="text-slate-300 mx-auto mb-3" />
-              <p className="font-heading text-lg text-slate-400 mb-4">
-                Your bucket list is empty — time to start dreaming!
+            <div className="bg-white rounded-3xl p-12 text-center border border-slate-100 shadow-card">
+              <div className="w-16 h-16 rounded-2xl bg-slate-50 flex items-center justify-center mx-auto mb-4">
+                <Heart size={28} className="text-slate-300" />
+              </div>
+              <p className="font-heading text-xl text-slate-400 mb-1">
+                Your bucket list is empty
               </p>
-              <Link
-                href="/explore"
-                className="inline-flex items-center gap-2 px-6 py-2.5 bg-brand-sky text-white font-semibold rounded-xl hover:bg-brand-sky-dark transition-colors duration-200 cursor-pointer"
-              >
+              <p className="text-sm text-slate-400 mb-6">
+                Start exploring and save your dream destinations
+              </p>
+              <Link href="/explore" className="btn-primary">
                 <Compass size={16} />
                 Explore Destinations
               </Link>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-2">
               {bucketList.map((item) => {
                 const dest = destinations[item.destination_id];
                 if (!dest) return null;
@@ -206,11 +224,11 @@ export default function DashboardPage() {
                 return (
                   <div
                     key={item.id}
-                    className="bg-white rounded-xl p-4 border border-slate-200/60 flex items-center gap-4 hover:shadow-md transition-shadow duration-200"
+                    className="bg-white rounded-2xl p-4 border border-slate-100 shadow-card flex items-center gap-4 hover:shadow-card-hover transition-all duration-300 group"
                   >
                     {/* Thumbnail */}
                     <div
-                      className="w-16 h-16 rounded-xl bg-cover bg-center flex-shrink-0 cursor-pointer"
+                      className="w-14 h-14 rounded-xl bg-cover bg-center flex-shrink-0 cursor-pointer group-hover:scale-105 transition-transform duration-300"
                       style={{ backgroundImage: `url(${dest.image_url})` }}
                       onClick={() => setSelectedDest(dest)}
                     />
@@ -223,14 +241,14 @@ export default function DashboardPage() {
                       >
                         {dest.name}
                       </button>
-                      <p className="text-xs text-slate-400">{dest.region} · {dest.avg_daily_budget}</p>
+                      <p className="text-xs text-slate-400 font-medium">{dest.region} · {dest.avg_daily_budget}</p>
                     </div>
 
                     {/* Status selector */}
                     <select
                       value={item.status}
                       onChange={(e) => updateStatus(item.id, e.target.value)}
-                      className={`px-3 py-1.5 rounded-full text-xs font-semibold border-0 cursor-pointer ${st.color}`}
+                      className={`px-3.5 py-1.5 rounded-full text-xs font-bold border cursor-pointer focus:outline-none focus:ring-2 focus:ring-brand-sky/20 ${st.bg} ${st.color}`}
                     >
                       <option value="dreaming">Dreaming</option>
                       <option value="planning">Planning</option>
@@ -248,32 +266,31 @@ export default function DashboardPage() {
         <div className="grid md:grid-cols-2 gap-4">
           <Link
             href="/trips/new"
-            className="bg-white rounded-2xl p-6 border border-slate-200/60 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 cursor-pointer group"
+            className="bg-white rounded-3xl p-7 border border-slate-100 shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-300 cursor-pointer group"
           >
-            <div className="w-12 h-12 rounded-xl bg-orange-100 text-orange-500 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform duration-200">
-              <Map size={22} />
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center mb-4 shadow-soft group-hover:scale-105 transition-transform duration-300">
+              <Map size={20} className="text-white" strokeWidth={1.8} />
             </div>
             <h3 className="font-heading text-xl font-bold text-brand-ocean mb-1">Plan a Trip</h3>
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-slate-500 leading-relaxed">
               Build a day-by-day itinerary with budgets, bookings, and must-see spots.
             </p>
           </Link>
           <Link
             href="/memories/new"
-            className="bg-white rounded-2xl p-6 border border-slate-200/60 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 cursor-pointer group"
+            className="bg-white rounded-3xl p-7 border border-slate-100 shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-300 cursor-pointer group"
           >
-            <div className="w-12 h-12 rounded-xl bg-violet-100 text-violet-500 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform duration-200">
-              <Camera size={22} />
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center mb-4 shadow-soft group-hover:scale-105 transition-transform duration-300">
+              <Camera size={20} className="text-white" strokeWidth={1.8} />
             </div>
             <h3 className="font-heading text-xl font-bold text-brand-ocean mb-1">Add a Memory</h3>
-            <p className="text-sm text-slate-500">
-              Capture the moments that took your breath away — stories, photos, and feelings.
+            <p className="text-sm text-slate-500 leading-relaxed">
+              Capture the moments that took your breath away with stories, photos, and feelings.
             </p>
           </Link>
         </div>
       </main>
 
-      {/* Modal */}
       {selectedDest && (
         <DestinationModal
           destination={selectedDest}
