@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import ChatFAB from "@/components/chat/ChatFAB";
 
 export const metadata: Metadata = {
   title: "Bucket List Travel — Plan Adventures, Collect Memories",
@@ -20,10 +19,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="min-h-screen">
-        {children}
-        <ChatFAB />
-      </body>
+      <body className="min-h-screen">{children}</body>
     </html>
   );
 }

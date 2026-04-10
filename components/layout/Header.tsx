@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Globe, Heart, Compass, Camera, Map, Menu, X, LogOut, User } from "lucide-react";
+import { Globe, Heart, Compass, Camera, Sparkles, Menu, X, LogOut, User } from "lucide-react";
 
 interface HeaderProps {
   user?: { email: string; full_name?: string } | null;
@@ -10,9 +10,9 @@ interface HeaderProps {
 }
 
 const navItems = [
+  { href: "/plan", label: "Plan with AI", icon: Sparkles, highlight: true },
   { href: "/explore", label: "Explore", icon: Compass },
   { href: "/dashboard", label: "Bucket List", icon: Heart },
-  { href: "/trips/new", label: "Plan Trip", icon: Map },
   { href: "/memories", label: "Memories", icon: Camera },
 ];
 
@@ -42,11 +42,15 @@ export default function Header({ user, onSignOut }: HeaderProps) {
 
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-0.5">
-            {navItems.map(({ href, label, icon: Icon }) => (
+            {navItems.map(({ href, label, icon: Icon, highlight }) => (
               <Link
                 key={href}
                 href={href}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium text-slate-500 hover:text-brand-ocean hover:bg-brand-bg transition-all duration-200 cursor-pointer"
+                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 cursor-pointer ${
+                  highlight
+                    ? "text-brand-orange hover:text-brand-orange-dark hover:bg-orange-50"
+                    : "text-slate-500 hover:text-brand-ocean hover:bg-brand-bg"
+                }`}
               >
                 <Icon size={16} strokeWidth={1.8} />
                 {label}
@@ -106,12 +110,16 @@ export default function Header({ user, onSignOut }: HeaderProps) {
         {menuOpen && (
           <div className="md:hidden pb-4 animate-slide-down">
             <nav className="flex flex-col gap-0.5">
-              {navItems.map(({ href, label, icon: Icon }) => (
+              {navItems.map(({ href, label, icon: Icon, highlight }) => (
                 <Link
                   key={href}
                   href={href}
                   onClick={() => setMenuOpen(false)}
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-600 hover:text-brand-ocean hover:bg-brand-bg transition-all duration-200 cursor-pointer"
+                  className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 cursor-pointer ${
+                    highlight
+                      ? "text-brand-orange hover:bg-orange-50"
+                      : "text-slate-600 hover:text-brand-ocean hover:bg-brand-bg"
+                  }`}
                 >
                   <Icon size={18} strokeWidth={1.8} />
                   {label}

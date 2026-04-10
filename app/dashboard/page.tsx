@@ -6,7 +6,7 @@ import Header from "@/components/layout/Header";
 import DestinationModal from "@/components/destinations/DestinationModal";
 import { createClient } from "@/lib/supabase";
 import type { Destination, BucketListItem, Trip, Memory } from "@/lib/types";
-import { Heart, Map, Camera, Compass, ArrowRight, Sparkles, Plane, Globe } from "lucide-react";
+import { Heart, Map, Camera, Compass, ArrowRight, Sparkles, Plane, Globe, Send } from "lucide-react";
 
 const statusLabels: Record<string, { label: string; color: string; bg: string }> = {
   dreaming: { label: "Dreaming", color: "text-violet-700", bg: "bg-violet-50 border-violet-100" },
@@ -142,6 +142,7 @@ export default function DashboardPage() {
   const dreamingCount = bucketList.filter((b) => b.status === "dreaming").length;
   const planningCount = bucketList.filter((b) => b.status === "planning").length;
   const visitedCount = bucketList.filter((b) => b.status === "visited").length;
+  const firstName = profile?.full_name?.split(" ")[0];
 
   return (
     <div className="min-h-screen bg-brand-bg">
@@ -164,6 +165,40 @@ export default function DashboardPage() {
       </div>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* AI Concierge Hero Card */}
+        <Link
+          href="/plan"
+          className="block mb-8 group relative overflow-hidden rounded-3xl shadow-card hover:shadow-card-hover transition-all duration-300 cursor-pointer"
+        >
+          <div className="absolute inset-0 bg-gradient-to-br from-brand-orange via-amber-500 to-amber-600" />
+          <div className="absolute inset-0 opacity-[0.08]" style={{
+            backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`,
+            backgroundSize: '30px 30px',
+          }} />
+          <div className="absolute -top-10 -right-10 w-64 h-64 rounded-full bg-white/10 blur-3xl" />
+
+          <div className="relative flex flex-col md:flex-row items-start md:items-center gap-6 p-7 md:p-8">
+            <div className="flex-shrink-0 w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm border border-white/30 flex items-center justify-center shadow-lg">
+              <Sparkles size={26} className="text-white" strokeWidth={1.8} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="text-[10px] font-bold text-white/70 uppercase tracking-widest mb-1">
+                AI Travel Concierge
+              </div>
+              <h2 className="font-heading text-2xl md:text-3xl font-bold text-white mb-1 leading-tight">
+                {firstName ? `${firstName}, where will you go next?` : "Where will you go next?"}
+              </h2>
+              <p className="text-sm text-white/80 italic font-heading">
+                Tell me about your dream trip. I'll build the itinerary.
+              </p>
+            </div>
+            <div className="flex items-center gap-2 px-5 py-3 bg-white rounded-2xl font-semibold text-sm text-brand-orange shadow-lg group-hover:scale-105 transition-transform duration-300">
+              Start Planning
+              <ArrowRight size={16} />
+            </div>
+          </div>
+        </Link>
+
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
           {[
